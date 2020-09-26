@@ -8,6 +8,7 @@ import edu.neu.coe.info6205.sort.Helper;
 import edu.neu.coe.info6205.sort.SortWithHelper;
 import edu.neu.coe.info6205.util.Config;
 
+
 public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
 
     /**
@@ -52,9 +53,16 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
      * @param to   the index of the first element not to sort
      */
     public void sort(X[] xs, int from, int to) {
-        final Helper<X> helper = getHelper();
-
         // TO BE IMPLEMENTED
+    	final Helper<X> helper = getHelper();
+    	while(from != to) {
+    		for(int i=from;i>0;i--) {
+    			boolean swapped = false;
+    			swapped = helper.swapStableConditional(xs, i);
+    			if (!swapped) break;
+    		}
+    		from++;
+    	}
     }
 
     /**
@@ -68,5 +76,4 @@ public class InsertionSort<X extends Comparable<X>> extends SortWithHelper<X> {
     }
 
     public static final String DESCRIPTION = "Insertion sort";
-
 }

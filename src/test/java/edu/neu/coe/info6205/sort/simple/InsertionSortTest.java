@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("ALL")
 public class InsertionSortTest {
-
+	
     @Test
     public void sort0() throws Exception {
         final List<Integer> list = new ArrayList<>();
@@ -33,8 +33,8 @@ public class InsertionSortTest {
         SortWithHelper<Integer> sorter = new InsertionSort<Integer>(helper);
         sorter.preProcess(xs);
         Integer[] ys = sorter.sort(xs);
-        assertTrue(helper.sorted(ys));
         sorter.postProcess(ys);
+        assertTrue(helper.sorted(ys));
         final int compares = (int) statPack.getStatistics(InstrumentedHelper.COMPARES).mean();
         assertEquals(list.size() - 1, compares);
         final int inversions = (int) statPack.getStatistics(InstrumentedHelper.INVERSIONS).mean();
@@ -98,5 +98,5 @@ public class InsertionSortTest {
     }
 
     final static LazyLogger logger = new LazyLogger(InsertionSort.class);
-
+   
 }
