@@ -4,12 +4,22 @@
 
 package edu.neu.coe.info6205.util;
 
+import static edu.neu.coe.info6205.util.Utilities.formatWhole;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import static edu.neu.coe.info6205.util.Utilities.formatWhole;
+import edu.neu.coe.info6205.sort.BaseHelper;
+import edu.neu.coe.info6205.sort.GenericSort;
+import edu.neu.coe.info6205.sort.Helper;
+import edu.neu.coe.info6205.sort.simple.InsertionSort;
+
 
 /**
  * This class implements a simple Benchmark utility for measuring the running time of algorithms.
@@ -118,6 +128,57 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     public Benchmark_Timer(String description, Consumer<T> f) {
         this(description, null, f, null);
     }
+    
+    
+    public static void main(String[] args) {
+    	String description = "Insertion sort";
+        Helper<Integer> helper = new BaseHelper<>(description, N);
+        final GenericSort<Integer> sort = new InsertionSort<>(helper);
+        helper.init(N);
+
+        //random array
+        runBenchmark(description, sort, helper, helper.random(Integer.class, r -> r.nextInt()), "random ordered");        
+       
+        //ordered array
+        List<Integer> list = new ArrayList<Integer>();
+        for(int i=1;i<=N;i++) {
+        	list.add(i);
+        }
+        runBenchmark(description, sort, helper, list.toArray(new Integer[0]), "ordered");
+        
+        //Partially Ordered array
+        list.clear();
+        for(int i=1;i<=N/2;i++) {
+        	list.add(i);
+        }
+        Random rand = new Random();
+        for(int i=list.size();i<=N-1;i++) {
+        	list.add(rand.nextInt());
+        }
+        System.out.println("size ::::::::::::::::::::::: " + list.size());
+        runBenchmark(description, sort, helper, list.toArray(new Integer[0]), "partially ordered");
+        
+        
+        //reverse ordered array
+        list.clear();
+        for(int i=N;i>0;i--) {
+        	list.add(i);
+        }
+        runBenchmark(description, sort, helper, list.toArray(new Integer[0]), "reverse ordered");   
+    }
+    
+    public static void runBenchmark(String description, GenericSort<Integer> sort, Helper<Integer> helper, Integer[] integers, String sortingMethod) {
+        Supplier<Integer[]> supplier = () -> integers;
+        final Benchmark<Integer[]> benchmark = new Benchmark_Timer<>(
+                description + " for " + N + " " + sortingMethod + " Integers",
+                (xs) -> Arrays.copyOf(xs, xs.length),
+                sort::mutatingSort,
+                null
+        );
+        logger.info(Utilities.formatDecimal3Places(benchmark.runFromSupplier(supplier, 1)) + " ms");   
+    }
+    
+    public static final int N = 8000;
 
     private final String description;
     private final UnaryOperator<T> fPre;
