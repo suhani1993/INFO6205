@@ -80,9 +80,12 @@ public class UF_HWQUPC implements UF {
      */
     public int find(int p) {
         validate(p);
-        int root = p;
         // TO BE IMPLEMENTED
-        return root;
+        if(p != parent[p])
+        {
+        	p = doPathCompression(p);
+        }
+        return p;
     }
 
     /**
@@ -110,7 +113,9 @@ public class UF_HWQUPC implements UF {
      */
     public void union(int p, int q) {
         // CONSIDER can we avoid doing find again?
-        mergeComponents(find(p), find(q));
+    	//We can not avoid find again because we need to assign 
+    	//parent(root) of one component as parent of other.
+        mergeComponents(getParent(p), getParent(q));
         count--;
     }
 
@@ -166,15 +171,48 @@ public class UF_HWQUPC implements UF {
     private final int[] height;   // height[i] = height of subtree rooted at i
     private int count;  // number of components
     private boolean pathCompression;
-
+    private static int noOfConnections;
+    
     private void mergeComponents(int i, int j) {
         // TO BE IMPLEMENTED make shorter root point to taller one
+//         if (i == j) updateParent(i, j);
+
+         // make smaller root point to larger one
+         if (height[i] < height[j]) {
+        	 updateParent(i, j);
+        	 updateHeight(j, i);
+         }else{
+        	 updateParent(j, i);
+        	 updateHeight(i, j);
+         }
+         noOfConnections++;
     }
 
     /**
      * This implements the single-pass path-halving mechanism of path compression
      */
-    private void doPathCompression(int i) {
+    private int doPathCompression(int i) {
         // TO BE IMPLEMENTED update parent to value of grandparent
+    	while (i != parent[i]) {
+            // Path compression
+			parent[i] = parent[parent[i]];
+            // find next node
+			i = parent[i];
+		}
+    	return i;
+    }
+    
+ 
+    public static void main(String[] args) {
+//    	if(args.length > 0) {
+//    		int noofSites = Integer.parseInt(args[0]);
+    		UF_HWQUPC data = new UF_HWQUPC(10);
+    		for(int i=0;i<args.length;i++) {
+    			int p = Integer.parseInt(args[++i]);
+    			int q = Integer.parseInt(args[i]);
+    			data.connect(p, q);
+    		}
+    		System.out.println("No of connections :: " + noOfConnections);
+//    	}
     }
 }
