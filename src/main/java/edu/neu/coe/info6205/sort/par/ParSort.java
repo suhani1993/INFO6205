@@ -19,6 +19,21 @@ class ParSort {
             CompletableFuture<int[]> parsort = parsort1.thenCombine(parsort2, (xs1, xs2) -> {
                 int[] result = new int[xs1.length + xs2.length];
                 // TO IMPLEMENT
+                int i=0, j=0, k=0;
+        		while(i != xs1.length && j != xs2.length) {
+        			if(xs1[i] <= xs2[j]) {
+        				result[k++] = xs1[i++];
+        			}else if(xs1[i] > xs2[j]) {
+        				result[k++] = xs2[j++];
+        			}
+        		}
+        		
+        		while(i != xs1.length) {
+        			result[k++] = xs1[i++];
+        		}
+        		while(j != xs2.length) {
+        			result[k++] = xs2[j++];
+        		}
                 return result;
             });
 
@@ -31,11 +46,16 @@ class ParSort {
     private static CompletableFuture<int[]> parsort(int[] array, int from, int to) {
         return CompletableFuture.supplyAsync(
                 () -> {
-                    int[] result = new int[to - from];
-                    // TO IMPLEMENT
-                    System.arraycopy(array, from, result, 0, result.length);
-                    sort(result, 0, to - from);
-                    return result;
+                	int[] result = new int[to - from];
+                        // TO IMPLEMENT
+                	try {
+                        System.arraycopy(array, from, result, 0, result.length);
+                        sort(result, 0, to - from);                    
+                	}catch(Exception e) {
+                		e.printStackTrace();
+                	}
+                	return result;
+                    
                 }
         );
     }
